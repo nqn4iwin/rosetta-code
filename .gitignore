@@ -1,0 +1,33 @@
+# --- Codex safety ignore block ---
+.venv/
+venv/
+.env
+.env.*
+*.pem
+*.key
+*.token
+*.secret
+__pycache__/
+*.pyc
+.cache/
+.ipynb_checkpoints/
+.codex/
+.pre-commit-config.yaml
+AGENTS.md
+codex-repo-safety.ps1
+PLAN.md
+TODO.md
+docs/PLAN.md
+docs/TODO.md
+# --- End Codex safety ignore block ---
+
+# Private learning material and build outputs
+/private-study/
+/go/bin/
+/go/hello
+/go/*.exe
+/rust/target/
+/haskell/dist-newstyle/
+/c/build/
+/java/target/
+*.class

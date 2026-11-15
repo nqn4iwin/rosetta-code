@@ -1,0 +1,8 @@
+{
+  "name": "Rosetta learning",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "."
+  },
+  "remoteUser": "root"
+}

@@ -1,0 +1,95 @@
+name: learning-ci
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  go:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Build development image
+        run: docker build -t rosetta-learning .devcontainer
+      - name: Build and check hello
+        run: |
+          docker run --rm -v "$PWD:/workspace" -w /workspace/go rosetta-learning bash -euo pipefail -c '
+            go build ./...
+            go vet ./...
+            test -z "$(gofmt -l .)"
+            output=$(go run ./cmd/hello)
+            printf "%s\n" "$output"
+            test "$output" = "Hello, Go!"
+          '
+  rust:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Build development image
+        run: docker build -t rosetta-learning .devcontainer
+      - name: Build and check hello
+        run: |
+          docker run --rm -v "$PWD:/workspace" -w /workspace/rust rosetta-learning bash -euo pipefail -c '
+            cargo fmt --check
+            cargo check --all-targets --locked
+            cargo build --bins --locked
+            output=$(./target/debug/hello)
+            printf "%s\n" "$output"
+            test "$output" = "Hello, Rust!"
+          '
+  haskell:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Build development image
+        run: docker build -t rosetta-learning .devcontainer
+      - name: Build and check hello
+        run: |
+          docker run --rm -v "$PWD:/workspace" -w /workspace/haskell rosetta-learning bash -euo pipefail -c '
+            cabal update
+            cabal build all
+            output=$("$(cabal list-bin exe:hello)")
+            printf "%s\n" "$output"
+            test "$output" = "Hello, Haskell!"
+          '
+  c:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Build development image
+        run: docker build -t rosetta-learning .devcontainer
+      - name: Build and check hello
+        run: |
+          docker run --rm -v "$PWD:/workspace" -w /workspace/c rosetta-learning bash -euo pipefail -c '
+            make
+            output=$(./build/hello)
+            printf "%s\n" "$output"
+            test "$output" = "Hello, C!"
+          '
+  java:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Build development image
+        run: docker build -t rosetta-learning .devcontainer
+      - name: Build and check hello
+        run: |
+          docker run --rm -v "$PWD:/workspace" -w /workspace/java rosetta-learning bash -euo pipefail -c '
+            mvn -B package
+            output=$(java -cp target/classes learning.hello.Main)
+            printf "%s\n" "$output"
+            test "$output" = "Hello, Java!"
+          '
